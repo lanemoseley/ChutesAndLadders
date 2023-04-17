@@ -3,20 +3,11 @@
 #include <iomanip>
 #include <iostream>
 
+#include "board.h"
+
 using namespace std;
 
-const int BOARD_SIZE = 40;
-
 const int MAX_PLAYERS = 4;
-
-const char STATIC_BOARD[BOARD_SIZE] = {
-    '_', '_', '_', '#', '1', '_', '2', '_', '_', '_', '_', '1', '$', '_',
-    '_', '_', '_', '#', '_', '3', '_', '_', '_', '_', '_', '_', '%', '2',
-    '_', '_', '$', '_', '_', '_', '_', '%', '3', '_', '_', '_'};
-
-const int CHUTES_MAP[2][3] = {3, 12, 26, 17, 30, 35};
-
-const int LADDERS_MAP[2][3] = {11, 27, 36, 4, 6, 19};
 
 void activate_chute();
 void activate_ladder();
@@ -124,16 +115,16 @@ void has_chute_or_ladder(int check_val, int &move_to, char &landed_on) {
 
   for (i = 0; i < 3; ++i) {
     // Checking for start of chute
-    if (check_val == CHUTES_MAP[0][i]) {
-      move_to = CHUTES_MAP[1][i];
+    if (check_val == Board::CHUTES_MAP[0][i]) {
+      move_to = Board::CHUTES_MAP[1][i];
       landed_on = 'C';
 
       return;
     }
 
     // Checking for start of ladder
-    else if (check_val == LADDERS_MAP[0][i]) {
-      move_to = LADDERS_MAP[1][i];
+    else if (check_val == Board::LADDERS_MAP[0][i]) {
+      move_to = Board::LADDERS_MAP[1][i];
       landed_on = 'L';
 
       return;
@@ -188,17 +179,17 @@ void move(bool &game_over, char mode, int current_player, int player_list[]) {
 
   if (hit_player == false) {
     // Checking that player didn't roll past the last square
-    if (move_to > BOARD_SIZE - 1) {
+    if (move_to > Board::BOARD_SIZE - 1) {
       cout << "Rolled past the end of the board. You need an exact roll.\n";
     }
     // Checking for a winner
-    else if (move_to == BOARD_SIZE - 1) {
+    else if (move_to == Board::BOARD_SIZE - 1) {
       winner = 97 + current_player;
       cout << "Player " << winner << " won.\n";
       game_over = true;
     }
     // Updating current player's location
-    else if (move_to < BOARD_SIZE - 1) {
+    else if (move_to < Board::BOARD_SIZE - 1) {
       (player_list[current_player] = move_to);
     }
   }
@@ -211,7 +202,7 @@ void print_board(int player_list[]) {
   char symbol = 'Z';
 
   // Print Game Board
-  for (i = 0; i < BOARD_SIZE; ++i) {
+  for (i = 0; i < Board::BOARD_SIZE; ++i) {
     // Getting the board symbol
     symbol = square_symbol(i, player_list);
 
@@ -227,7 +218,7 @@ void print_board(int player_list[]) {
       cout << "| " << symbol << " |\n";
     }
 
-    else if (i == BOARD_SIZE - 1) {
+    else if (i == Board::BOARD_SIZE - 1) {
       cout << "| " << symbol << " |";
     }
 
@@ -332,8 +323,8 @@ char square_symbol(int check_square, const int player_list[]) {
   }
 
   // Checks for game-board symbol
-  if (STATIC_BOARD[check_square] != '_') {
-    symbol = STATIC_BOARD[check_square];
+  if (Board::STATIC_BOARD[check_square] != '_') {
+    symbol = Board::STATIC_BOARD[check_square];
 
     return symbol;
   }
