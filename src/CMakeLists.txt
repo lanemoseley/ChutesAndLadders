@@ -1,1 +1,1 @@
-add_executable(${PROJECT_NAME} ChutesAndLadders.cpp)
+add_executable(${PROJECT_NAME} ChutesAndLadders.cpp board.cpp menu.cpp)

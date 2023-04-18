@@ -1,58 +1,31 @@
 #include <cmath>
 #include <ctime>
-#include <iomanip>
-#include <iostream>
+#include <vector>
 
 #include "board.h"
-
-using namespace std;
-
-const int MAX_PLAYERS = 4;
+#include "menu.h"
 
 void activate_chute();
 void activate_ladder();
-char get_mode();
 void has_chute_or_ladder(int, int &, char &);
-bool has_player(int, int, const int[]);
-void move(bool &, char, int, int[]);
-void print_board(int[]);
-char print_menu(int);
+bool has_player(int, int, std::vector<int> &);
+void move(bool &, char, int, std::vector<int> &);
+void print_board(std::vector<int> &);
 int roll_dice(char);
-void run_game(char, int, int[]);
-char square_symbol(int, const int[]);
+void run_game(Menu, char, int, std::vector<int> &);
+char square_symbol(int, std::vector<int> &);
 
 int main() {
-  int i = 0;
-  char mode = 'Z';
-  int num_players = 0;
+  Menu menu;
+  menu.welcome();
+  int num_players = menu.getNumPlayers();
+  char mode = menu.getMode();
 
-  // A player's symbol is represented by the array index, a player's position
-  // is the value at that index.
-  int player_list[MAX_PLAYERS];
+  // Initializing players. A player's symbol is represented by the array index,
+  // a player's position is the value at that index.
+  std::vector<int> player_list(num_players, -1);
 
-  // Initializing players
-  for (i = 0; i < MAX_PLAYERS; ++i) {
-    player_list[i] = -1;
-  }
-
-  // Welcome Menu
-  cout << setfill('-') << setw(23) << "Chutes and ladders";
-  cout << setfill('-') << setw(6) << "\n";
-  cout << "1, 2, 3 go up, and #, $, and ^ go down\n";
-
-  // Getting the number of players
-  cout << "\nPlease, enter how many players: ";
-  cin >> num_players;
-
-  // Verifying 2 - 4 players
-  while (num_players < 2 || num_players > MAX_PLAYERS) {
-    cout << "Please enter 2 to " << MAX_PLAYERS << " players: ";
-    cin >> num_players;
-  }
-
-  mode = get_mode();
-
-  run_game(mode, num_players, player_list);
+  run_game(menu, mode, num_players, player_list);
 
   return 0;
 }
@@ -89,27 +62,6 @@ void activate_ladder() {
   return;
 }
 
-char get_mode() {
-  char mode = 'Z';
-
-  cout << "\nChoose which mode to play in"
-       << "\n(D)ebug mode\n(P)ower mode"
-       << "\nAnything else will be regular mode"
-       << "\nEnter Mode: ";
-
-  cin >> mode;
-  mode = toupper(mode);
-
-  if (mode != 'D' && mode != 'P') {
-    mode = 'R';
-    srand(int(time(NULL)));
-  } else {
-    srand(10);
-  }
-
-  return mode;
-}
-
 void has_chute_or_ladder(int check_val, int &move_to, char &landed_on) {
   int i = 0;
 
@@ -138,12 +90,12 @@ void has_chute_or_ladder(int check_val, int &move_to, char &landed_on) {
   return;
 }
 
-bool has_player(int move_to, int current_player, const int player_list[]) {
-  int i = 0;
+bool has_player(int move_to, int current_player,
+                std::vector<int> &player_list) {
   char hit_player = 'Z';
 
-  for (i = 0; i < MAX_PLAYERS; ++i) {
-    // Checking for player - Players can't hit themselves
+  for (int i = 0; i < player_list.size(); ++i) {
+    // Checking for player. Players can't hit themselves.
     if (move_to == player_list[i] && current_player != i) {
       hit_player = 97 + i; // ASCII value
       cout << "Hit player " << hit_player << endl;
@@ -155,7 +107,8 @@ bool has_player(int move_to, int current_player, const int player_list[]) {
   return false;
 }
 
-void move(bool &game_over, char mode, int current_player, int player_list[]) {
+void move(bool &game_over, char mode, int current_player,
+          std::vector<int> &player_list) {
   int check_val = 0;
   int move_to = 0;
   char landed_on = 'Z';
@@ -196,7 +149,7 @@ void move(bool &game_over, char mode, int current_player, int player_list[]) {
   return;
 }
 
-void print_board(int player_list[]) {
+void print_board(std::vector<int> &player_list) {
   bool end_row = false;
   int i = 0;
   char symbol = 'Z';
@@ -230,34 +183,6 @@ void print_board(int player_list[]) {
   return;
 }
 
-char print_menu(int current_player) {
-  char choice = 'Z';
-  char player_symbol = 'Z';
-
-  player_symbol = current_player + 97; // ASCII value
-
-  // Menu
-  cout << endl;
-  cout << setfill('-') << setw(22) << "Current player is " << player_symbol;
-  cout << setfill('-') << setw(5) << "\n";
-
-  cout << "(R)oll\n(Q)uit\n";
-
-  cin >> choice;
-  choice = toupper(choice);
-
-  // Checking for valid input
-  while (choice != 'R' && choice != 'Q') {
-    cout << "Invalid option"
-         << "\n(R)oll\n(Q)uit \n";
-
-    cin >> choice;
-    choice = toupper(choice);
-  }
-
-  return choice;
-}
-
 int roll_dice(char mode) {
   int roll_val = 0;
 
@@ -277,7 +202,8 @@ int roll_dice(char mode) {
   return roll_val;
 }
 
-void run_game(char mode, int num_players, int player_list[]) {
+void run_game(Menu menu, char mode, int num_players,
+              std::vector<int> &player_list) {
   bool game_over = false;
   int current_player = 0;
   int i = 0;
@@ -289,7 +215,7 @@ void run_game(char mode, int num_players, int player_list[]) {
 
       print_board(player_list);
 
-      roll_or_quit = print_menu(current_player);
+      roll_or_quit = menu.printMenu(current_player);
 
       if (roll_or_quit == 'Q') {
         game_over = true;
@@ -309,12 +235,11 @@ void run_game(char mode, int num_players, int player_list[]) {
   return;
 }
 
-char square_symbol(int check_square, const int player_list[]) {
+char square_symbol(int check_square, std::vector<int> &player_list) {
   char symbol = ' ';
-  int i = 0;
 
   // Checks each players location
-  for (i = 0; i < MAX_PLAYERS; ++i) {
+  for (int i = 0; i < player_list.size(); ++i) {
     if (player_list[i] == check_square) {
       symbol = 97 + i; // ASCII value
 
