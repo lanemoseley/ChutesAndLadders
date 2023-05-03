@@ -1,6 +1,7 @@
 #ifndef _MENU_H_
 #define _MENU_H_
 
+#include "player.h"
 #include <iomanip>
 #include <iostream>
 
@@ -18,7 +19,7 @@ public:
   Menu();
   int getNumPlayers();
   char getMode();
-  char printMenu(int);
+  char printMenu(Player);
   void welcome();
 };
 

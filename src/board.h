@@ -1,6 +1,7 @@
 #ifndef _BOARD_H_
 #define _BOARD_H_
 
+#include "player.h"
 #include <iostream>
 #include <vector>
 
@@ -15,13 +16,14 @@ class Board {
       '_', '_', '$', '_', '_', '_', '_', '%', '3', '_', '_', '_'};
   const int chutes[2][3] = {3, 12, 26, 17, 30, 35};
   const int ladders[2][3] = {11, 27, 36, 4, 6, 19};
-  char squareSymbol(int, std::vector<int> &);
+  char squareSymbol(int, std::vector<Player> &);
 
 public:
   Board();
   int getBoardSize();
   void hasChuteOrLadder(int, int &, char &);
-  bool hasPlayer(int, int, std::vector<int> &);
-  void printBoard(std::vector<int> &);
+  bool hasPlayer(int, Player, std::vector<Player> &);
+  void printBoard(std::vector<Player> &);
 };
+
 #endif

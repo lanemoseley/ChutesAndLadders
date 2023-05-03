@@ -43,15 +43,12 @@ char Menu::getMode() {
   return mode;
 }
 
-char Menu::printMenu(int current_player) {
+char Menu::printMenu(Player player) {
   char choice = 'Z';
-  char player_symbol = 'Z';
-
-  player_symbol = current_player + 97; // ASCII value
 
   // Menu
   cout << endl;
-  cout << setfill('-') << setw(22) << "Current player is " << player_symbol;
+  cout << setfill('-') << setw(22) << "Current player is " << player.symbol;
   cout << setfill('-') << setw(5) << "\n";
 
   cout << "(R)oll\n(Q)uit\n";

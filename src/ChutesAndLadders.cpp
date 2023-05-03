@@ -4,12 +4,13 @@
 
 #include "board.h"
 #include "menu.h"
+#include "player.h"
 
 void activate_chute();
 void activate_ladder();
-void move(bool &, char, int, std::vector<int> &);
+void move(bool &, char, Player &, std::vector<Player> &);
 int roll_dice(char);
-void run_game(Board, Menu, char, int, std::vector<int> &);
+void run_game(Board, Menu, char, std::vector<Player> &);
 
 int main() {
   Board board;
@@ -18,11 +19,13 @@ int main() {
   int num_players = menu.getNumPlayers();
   char mode = menu.getMode();
 
-  // Initializing players. A player's symbol is represented by the array index,
-  // a player's position is the value at that index.
-  std::vector<int> player_list(num_players, -1);
+  // Initializing players. Player's symbols are a, b, ..., z.
+  std::vector<Player> players;
+  for (int i = 0; i < num_players; ++i) {
+    players.push_back(Player{-1, char(i + 97)});
+  }
 
-  run_game(board, menu, mode, num_players, player_list);
+  run_game(board, menu, mode, players);
 
   return 0;
 }
@@ -59,8 +62,8 @@ void activate_ladder() {
   return;
 }
 
-void move(Board board, bool &game_over, char mode, int current_player,
-          std::vector<int> &player_list) {
+void move(Board board, bool &game_over, char mode, Player &current_player,
+          std::vector<Player> &players) {
   int check_val = 0;
   int move_to = 0;
   char landed_on = 'Z';
@@ -68,7 +71,7 @@ void move(Board board, bool &game_over, char mode, int current_player,
   char winner = 'Z';
 
   // Determining which square needs to be checked
-  check_val = roll_dice(mode) + player_list[current_player];
+  check_val = roll_dice(mode) + current_player.location;
   // Checking for a chute or ladder
   board.hasChuteOrLadder(check_val, move_to, landed_on);
 
@@ -80,7 +83,7 @@ void move(Board board, bool &game_over, char mode, int current_player,
   }
 
   // Checking for another player occupying the square
-  hit_player = board.hasPlayer(move_to, current_player, player_list);
+  hit_player = board.hasPlayer(move_to, current_player, players);
 
   if (hit_player == false) {
     // Checking that player didn't roll past the last square
@@ -89,13 +92,12 @@ void move(Board board, bool &game_over, char mode, int current_player,
     }
     // Checking for a winner
     else if (move_to == board.getBoardSize() - 1) {
-      winner = 97 + current_player;
-      cout << "Player " << winner << " won.\n";
+      cout << "Player " << current_player.symbol << " won.\n";
       game_over = true;
     }
     // Updating current player's location
     else if (move_to < board.getBoardSize() - 1) {
-      (player_list[current_player] = move_to);
+      (current_player.location = move_to);
     }
   }
   return;
@@ -120,30 +122,21 @@ int roll_dice(char mode) {
   return roll_val;
 }
 
-void run_game(Board board, Menu menu, char mode, int num_players,
-              std::vector<int> &player_list) {
+void run_game(Board board, Menu menu, char mode, std::vector<Player> &players) {
   bool game_over = false;
-  int current_player = 0;
-  int i = 0;
   char roll_or_quit = 'Z';
 
   while (game_over == false) {
-    for (i = 0; i < num_players; ++i) {
-      current_player = i;
-
-      board.printBoard(player_list);
-
-      roll_or_quit = menu.printMenu(current_player);
+    for (Player &player : players) {
+      board.printBoard(players);
+      roll_or_quit = menu.printMenu(player);
 
       if (roll_or_quit == 'Q') {
-        game_over = true;
-
         return;
       } else {
-        move(board, game_over, mode, current_player, player_list);
+        move(board, game_over, mode, player, players);
 
         if (game_over == true) {
-
           return;
         }
       }

@@ -2,7 +2,7 @@
 
 Board::Board() {}
 
-void Board::printBoard(std::vector<int> &player_list) {
+void Board::printBoard(std::vector<Player> &player_list) {
   bool end_row = false;
   int i = 0;
   char symbol = 'Z';
@@ -39,9 +39,7 @@ void Board::printBoard(std::vector<int> &player_list) {
 int Board::getBoardSize() { return BOARD_SIZE; }
 
 void Board::hasChuteOrLadder(int check_val, int &move_to, char &landed_on) {
-  int i = 0;
-
-  for (i = 0; i < 3; ++i) {
+  for (int i = 0; i < 3; ++i) {
     // Checking for start of chute
     if (check_val == chutes[0][i]) {
       move_to = chutes[1][i];
@@ -66,16 +64,12 @@ void Board::hasChuteOrLadder(int check_val, int &move_to, char &landed_on) {
   return;
 }
 
-bool Board::hasPlayer(int move_to, int current_player,
-                      std::vector<int> &player_list) {
-  char hit_player = 'Z';
-
-  for (int i = 0; i < player_list.size(); ++i) {
+bool Board::hasPlayer(int move_to, Player current_player,
+                      std::vector<Player> &players) {
+  for (Player player : players) {
     // Checking for player. Players can't hit themselves.
-    if (move_to == player_list[i] && current_player != i) {
-      hit_player = 97 + i; // ASCII value
-      cout << "Hit player " << hit_player << endl;
-
+    if (move_to == player.location && current_player.symbol != player.symbol) {
+      cout << "Hit player " << player.symbol << endl;
       return true;
     }
   }
@@ -83,24 +77,18 @@ bool Board::hasPlayer(int move_to, int current_player,
   return false;
 }
 
-char Board::squareSymbol(int check_square, std::vector<int> &player_list) {
-  char symbol = ' ';
-
+char Board::squareSymbol(int check_square, std::vector<Player> &players) {
   // Checks each players location
-  for (int i = 0; i < player_list.size(); ++i) {
-    if (player_list[i] == check_square) {
-      symbol = 97 + i; // ASCII value
-
-      return symbol;
+  for (Player player : players) {
+    if (player.location == check_square) {
+      return player.symbol;
     }
   }
 
   // Checks for game-board symbol
   if (board[check_square] != '_') {
-    symbol = board[check_square];
-
-    return symbol;
+    return board[check_square];
   }
 
-  return symbol;
+  return ' ';
 }
