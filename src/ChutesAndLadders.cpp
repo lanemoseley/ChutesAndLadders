@@ -42,8 +42,6 @@ void activate_chute() {
   } else {
     cout << "Chute: The Eagle has landed.\n";
   }
-
-  return;
 }
 
 void activate_ladder() {
@@ -58,8 +56,6 @@ void activate_ladder() {
   } else {
     cout << "Ladder: Houston, we have lift off.\n";
   }
-
-  return;
 }
 
 void move(Board board, bool &game_over, char mode, Player &current_player,
@@ -100,7 +96,6 @@ void move(Board board, bool &game_over, char mode, Player &current_player,
       (current_player.location = move_to);
     }
   }
-  return;
 }
 
 int roll_dice(char mode) {
@@ -142,6 +137,4 @@ void run_game(Board board, Menu menu, char mode, std::vector<Player> &players) {
       }
     }
   }
-
-  return;
 }

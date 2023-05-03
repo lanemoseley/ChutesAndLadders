@@ -3,37 +3,21 @@
 Board::Board() {}
 
 void Board::printBoard(std::vector<Player> &player_list) {
-  bool end_row = false;
-  int i = 0;
-  char symbol = 'Z';
+  for (int i = 0; i < BOARD_SIZE; ++i) {
+    char symbol = symbolAtLocation(i, player_list);
+    bool end_of_row = (i + 1) % 8 == 0 ? true : false;
+    bool end_of_last_row = i == BOARD_SIZE - 1 ? true : false;
 
-  // Print Game Board
-  for (i = 0; i < BOARD_SIZE; ++i) {
-    // Getting the board symbol
-    symbol = squareSymbol(i, player_list);
+    cout << "| " << symbol;
 
-    // Checking for end of a row
-    if ((i + 1) % 8 == 0) {
-      end_row = true;
+    if (end_of_row) {
+      cout << " |\n";
+    } else if (end_of_last_row) {
+      cout << " |";
     } else {
-      end_row = false;
-    }
-
-    // Printing the formatted table
-    if (end_row) {
-      cout << "| " << symbol << " |\n";
-    }
-
-    else if (i == BOARD_SIZE - 1) {
-      cout << "| " << symbol << " |";
-    }
-
-    else {
-      cout << "| " << symbol << " ";
+      cout << " ";
     }
   }
-
-  return;
 }
 
 int Board::getBoardSize() { return BOARD_SIZE; }
@@ -60,8 +44,6 @@ void Board::hasChuteOrLadder(int check_val, int &move_to, char &landed_on) {
   // Normal square
   move_to = check_val;
   landed_on = 'N';
-
-  return;
 }
 
 bool Board::hasPlayer(int move_to, Player current_player,
@@ -77,17 +59,17 @@ bool Board::hasPlayer(int move_to, Player current_player,
   return false;
 }
 
-char Board::squareSymbol(int check_square, std::vector<Player> &players) {
+char Board::symbolAtLocation(int location, std::vector<Player> &players) {
   // Checks each players location
   for (Player player : players) {
-    if (player.location == check_square) {
+    if (player.location == location) {
       return player.symbol;
     }
   }
 
   // Checks for game-board symbol
-  if (board[check_square] != '_') {
-    return board[check_square];
+  if (board[location] != '_') {
+    return board[location];
   }
 
   return ' ';
