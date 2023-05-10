@@ -8,24 +8,22 @@
 
 void activate_chute();
 void activate_ladder();
-void move(bool &, char, Player &, std::vector<Player> &);
+void move(Board, Menu, bool &, Player &, std::vector<Player> &);
 int roll_dice(char);
-void run_game(Board, Menu, char, std::vector<Player> &);
+void run_game(Board, Menu, std::vector<Player> &);
 
 int main() {
   Board board;
   Menu menu;
   menu.welcome();
-  int num_players = menu.getNumPlayers();
-  char mode = menu.getMode();
 
   // Initializing players. Player's symbols are a, b, ..., z.
   std::vector<Player> players;
-  for (int i = 0; i < num_players; ++i) {
+  for (int i = 0; i < menu.getNumPlayers(); ++i) {
     players.push_back(Player{char(i + 97)});
   }
 
-  run_game(board, menu, mode, players);
+  run_game(board, menu, players);
 
   return 0;
 }
@@ -58,7 +56,7 @@ void activate_ladder() {
   }
 }
 
-void move(Board board, bool &game_over, char mode, Player &current_player,
+void move(Board board, Menu menu, bool &game_over, Player &current_player,
           std::vector<Player> &players) {
   int move_to = 0;
   char landed_on = 'Z';
@@ -66,7 +64,7 @@ void move(Board board, bool &game_over, char mode, Player &current_player,
   char winner = 'Z';
 
   // Determining which square needs to be checked
-  int check_square = roll_dice(mode) + current_player.location;
+  int check_square = menu.rollDice() + current_player.location;
   // Checking for a chute or ladder
   board.hasChuteOrLadder(check_square, move_to, landed_on);
 
@@ -97,39 +95,21 @@ void move(Board board, bool &game_over, char mode, Player &current_player,
   }
 }
 
-int roll_dice(char mode) {
-  int roll_val = 0;
-
-  // Debug or Regular Mode
-  if (mode != 'P') {
-    roll_val = rand() % 6 + 1;
-    cout << "Rolled a " << roll_val;
-    cout << endl;
-  } else { // Power Mode
-    cout << "Roll: ";
-    cin >> roll_val;
-  }
-
-  return roll_val;
-}
-
-void run_game(Board board, Menu menu, char mode, std::vector<Player> &players) {
+void run_game(Board board, Menu menu, std::vector<Player> &players) {
   bool game_over = false;
-  char roll_or_quit = 'Z';
 
-  while (game_over == false) {
+  while (!game_over) {
     for (Player &player : players) {
       board.printBoard(players);
-      roll_or_quit = menu.printMenu(player);
 
-      if (roll_or_quit == 'Q') {
-        return;
-      } else {
-        move(board, game_over, mode, player, players);
+      if (menu.continuePlay(player)) {
+        move(board, menu, game_over, player, players);
 
-        if (game_over == true) {
+        if (game_over) {
           return;
         }
+      } else {
+        return;
       }
     }
   }

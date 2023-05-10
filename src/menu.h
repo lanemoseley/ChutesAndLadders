@@ -14,12 +14,17 @@ using std::setw;
 class Menu {
   int maxPlayers;
   int minPlayers;
+  char mode;
+  int numPlayers;
+
+  void setMode();
+  void setNumPlayers();
 
 public:
   Menu();
+  bool continuePlay(Player);
   int getNumPlayers();
-  char getMode();
-  char printMenu(Player);
+  int rollDice();
   void welcome();
 };
 
