@@ -4,6 +4,8 @@
 struct Player {
   int location;
   char symbol;
+
+  Player(char symbol) : location(-1), symbol(symbol) {}
 };
 
 #endif

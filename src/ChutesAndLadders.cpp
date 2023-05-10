@@ -22,7 +22,7 @@ int main() {
   // Initializing players. Player's symbols are a, b, ..., z.
   std::vector<Player> players;
   for (int i = 0; i < num_players; ++i) {
-    players.push_back(Player{-1, char(i + 97)});
+    players.push_back(Player{char(i + 97)});
   }
 
   run_game(board, menu, mode, players);
@@ -60,16 +60,15 @@ void activate_ladder() {
 
 void move(Board board, bool &game_over, char mode, Player &current_player,
           std::vector<Player> &players) {
-  int check_val = 0;
   int move_to = 0;
   char landed_on = 'Z';
   bool hit_player = false;
   char winner = 'Z';
 
   // Determining which square needs to be checked
-  check_val = roll_dice(mode) + current_player.location;
+  int check_square = roll_dice(mode) + current_player.location;
   // Checking for a chute or ladder
-  board.hasChuteOrLadder(check_val, move_to, landed_on);
+  board.hasChuteOrLadder(check_square, move_to, landed_on);
 
   // Prints messages indicating if the player landed on a chute or ladder
   if (landed_on == 'C') {
@@ -106,10 +105,7 @@ int roll_dice(char mode) {
     roll_val = rand() % 6 + 1;
     cout << "Rolled a " << roll_val;
     cout << endl;
-  }
-
-  // Power Mode
-  else {
+  } else { // Power Mode
     cout << "Roll: ";
     cin >> roll_val;
   }
