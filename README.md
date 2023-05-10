@@ -1,2 +1,2 @@
 # ChutesAndLadders
-Chutes And Ladders Game
+Chutes And Ladders game. Simple project for practicing successive refinement.
