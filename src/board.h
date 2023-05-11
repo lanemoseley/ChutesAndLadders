@@ -21,7 +21,8 @@ class Board {
 public:
   Board();
   int getBoardSize();
-  void hasChuteOrLadder(int, int &, char &);
+  bool hasChute(int, int &);
+  bool hasLadder(int, int &);
   bool hasPlayer(int, Player, std::vector<Player> &);
   void printBoard(std::vector<Player> &);
 };

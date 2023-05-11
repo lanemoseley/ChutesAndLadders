@@ -59,19 +59,17 @@ void activate_ladder() {
 void move(Board board, Menu menu, bool &game_over, Player &current_player,
           std::vector<Player> &players) {
   int move_to = 0;
-  char landed_on = 'Z';
   bool hit_player = false;
   char winner = 'Z';
 
   // Determining which square needs to be checked
   int check_square = menu.rollDice() + current_player.location;
-  // Checking for a chute or ladder
-  board.hasChuteOrLadder(check_square, move_to, landed_on);
 
+  // Checking for a chute or ladder
   // Prints messages indicating if the player landed on a chute or ladder
-  if (landed_on == 'C') {
+  if (board.hasChute(check_square, move_to)) {
     activate_chute();
-  } else if (landed_on == 'L') {
+  } else if (board.hasLadder(check_square, move_to)) {
     activate_ladder();
   }
 

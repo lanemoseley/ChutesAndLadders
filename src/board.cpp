@@ -22,28 +22,34 @@ void Board::printBoard(std::vector<Player> &player_list) {
 
 int Board::getBoardSize() { return BOARD_SIZE; }
 
-void Board::hasChuteOrLadder(int check_val, int &move_to, char &landed_on) {
+// TODO: remove output param move_to
+bool Board::hasChute(int check_val, int &move_to) {
   for (int i = 0; i < 3; ++i) {
     // Checking for start of chute
     if (check_val == chutes[0][i]) {
       move_to = chutes[1][i];
-      landed_on = 'C';
-
-      return;
-    }
-
-    // Checking for start of ladder
-    else if (check_val == ladders[0][i]) {
-      move_to = ladders[1][i];
-      landed_on = 'L';
-
-      return;
+      return true;
     }
   }
 
   // Normal square
   move_to = check_val;
-  landed_on = 'N';
+  return false;
+}
+
+// TODO: remove output param move_to
+bool Board::hasLadder(int check_val, int &move_to) {
+  for (int i = 0; i < 3; ++i) {
+    // Checking for start of ladder
+    if (check_val == ladders[0][i]) {
+      move_to = ladders[1][i];
+      return true;
+    }
+  }
+
+  // Normal square
+  move_to = check_val;
+  return false;
 }
 
 bool Board::hasPlayer(int move_to, Player current_player,
