@@ -1,18 +1,25 @@
+#include "config.h"
+#include "shared/board.h"
+#include "shared/menu.h"
+#include "shared/player.h"
+#include <boost/filesystem.hpp>
 #include <cmath>
 #include <ctime>
 #include <vector>
 
-#include "board.h"
-#include "menu.h"
-#include "player.h"
-
 void activate_chute();
 void activate_ladder();
 void move(Board, Menu, bool &, Player &, std::vector<Player> &);
+void printVersionAndBuildInfo();
 int roll_dice(char);
 void run_game(Board, Menu, std::vector<Player> &);
 
-int main() {
+int main(int argc, char *argv[]) {
+  if (argc > 1 && strcmp(argv[1], "-v") == 0) {
+    printVersionAndBuildInfo();
+    return 0;
+  }
+
   Board board;
   Menu menu;
   menu.welcome();
@@ -110,5 +117,30 @@ void run_game(Board board, Menu menu, std::vector<Player> &players) {
         return;
       }
     }
+  }
+}
+
+void printVersionAndBuildInfo() {
+  try {
+    boost::filesystem::path p(BUILD_DIR);
+    p /= "resources/about.txt";
+    std::ifstream aboutFile;
+    aboutFile.open(p);
+
+    std::string aboutLine;
+    std::string versionString;
+    std::string buildString;
+    while (std::getline(aboutFile, aboutLine)) {
+      if (aboutLine.find("version=") == 0) {
+        versionString = aboutLine.substr(8);
+      } else if (aboutLine.find("build=" == 0)) {
+        buildString = aboutLine.substr(6);
+      }
+    }
+
+    printf("Version: %s\n", versionString.c_str());
+    printf("Build Date: %s\n", buildString.c_str());
+  } catch (const std::ifstream::failure &e) {
+    throw;
   }
 }

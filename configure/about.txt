@@ -1,0 +1,2 @@
+version=@ChutesAndLadders_VERSION_MAJOR@.@ChutesAndLadders_VERSION_MINOR@
+build=@BUILD_DATE@ @BUILD_TIME@

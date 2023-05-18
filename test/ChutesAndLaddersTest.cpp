@@ -1,7 +1,8 @@
-// #include "ChutesAndLadders.cpp"
 #define BOOST_TEST_MODULE ChutesAndLaddersTest
+
 #include <boost/test/included/unit_test.hpp>
 
+// TODO:
 BOOST_AUTO_TEST_CASE(ChutesAndLaddersTest) {
   // To simplify this example test, let's suppose we'll test 'float'.
   // Some test are stupid, but all should pass.
